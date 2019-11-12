@@ -1,0 +1,58 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "e869111354cbf6d5cca92f77769d53fe",
+    "entities": [
+      {
+        "tableName": "RSSItem",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`rssItem_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `publicationDate` INTEGER, `title` TEXT, `imagePath` TEXT, `author` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "rssItem_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "publicationDate",
+            "columnName": "publicationDate",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "imagePath",
+            "columnName": "imagePath",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "author",
+            "columnName": "author",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "rssItem_id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e869111354cbf6d5cca92f77769d53fe')"
+    ]
+  }
+}
