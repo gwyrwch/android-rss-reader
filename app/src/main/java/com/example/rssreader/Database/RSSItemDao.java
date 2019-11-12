@@ -19,6 +19,9 @@ public interface RSSItemDao {
     @Delete
     void delete(RSSItem item);
 
+    @Query("DELETE FROM RSSItem")
+    void deleteAll();
+
     @Query("SELECT * FROM RSSItem ORDER BY RSSItem.publicationDate")
     LiveData<List<RSSItem>> sortByDate();
 }
