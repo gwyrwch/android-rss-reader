@@ -13,6 +13,7 @@ import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,7 +21,16 @@ import android.view.MenuItem;
 import com.example.rssreader.Models.RSSItem;
 import com.example.rssreader.ViewModels.ItemViewModel;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
+
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 public class MainActivity extends AppCompatActivity implements DownloadCallback {
     private ItemViewModel viewModel;
@@ -104,8 +114,8 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
     @Override
     public void updateFromDownload(String result) {
         if (result != null) {
-            Log.d("RESULT1", result);
-//            mDataText.setText(result);
+            System.out.println(result.length());
+
         } else {
             Log.d("RESULT1", "connection error");
 //            mDataText.setText(getString("connection error"));
