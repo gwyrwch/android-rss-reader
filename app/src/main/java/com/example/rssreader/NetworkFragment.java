@@ -10,13 +10,15 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import java.io.BufferedReader;
+import com.example.rssreader.XMLParser.RSSXmlParser;
+import com.example.rssreader.XMLParser.XMLItem;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
-
-import javax.net.ssl.HttpsURLConnection;
+import java.util.ArrayList;
+import java.util.List;
 
 
 
@@ -111,9 +113,9 @@ public class NetworkFragment extends Fragment {
          * doInBackground().
          */
         class Result {
-            public String resultValue;
+            public List<XMLItem> resultValue;
             public Exception exception;
-            public Result(String resultVal) {
+            public Result(List<XMLItem> resultVal) {
                 resultValue = resultVal;
             }
             public Result(Exception exc) {
@@ -132,7 +134,7 @@ public class NetworkFragment extends Fragment {
                         (networkInfo.getType() != ConnectivityManager.TYPE_WIFI
                                 && networkInfo.getType() != ConnectivityManager.TYPE_MOBILE)) {
                     // If no connectivity, cancel task and update Callback with null data.
-                    downloadCallback.updateFromDownload(null);
+                    downloadCallback.updateFromDownload(new ArrayList<XMLItem>());
                     cancel(true);
                 }
             }
@@ -147,10 +149,14 @@ public class NetworkFragment extends Fragment {
             if (!isCancelled() && urls != null && urls.length > 0) {
                 String urlString = urls[0];
                 try {
-                    URL url = new URL(urlString);
-                    String resultString = downloadUrl(url);
-                    if (resultString != null) {
-                        result = new Result(resultString);
+                    InputStream stream = downloadUrl(urlString);
+
+                    RSSXmlParser xmlParser = new RSSXmlParser();
+                    List<XMLItem> items = xmlParser.parse(stream);
+
+
+                    if (items.size() != 0) {
+                        result = new Result(items);
                     } else {
                         throw new IOException("No response received.");
                     }
@@ -181,7 +187,7 @@ public class NetworkFragment extends Fragment {
                 if (result.exception != null) {
                     downloadCallback.updateFromDownload(result.exception.getMessage());
                 } else if (result.resultValue != null) {
-                    downloadCallback.updateFromDownload(result.resultValue);
+                    downloadCallback.updateFromDownload((ArrayList<XMLItem>)result.resultValue);
                 }
                 downloadCallback.finishDownloading();
             }
@@ -194,63 +200,20 @@ public class NetworkFragment extends Fragment {
         protected void onCancelled(Result result) {
         }
 
-        /**
-         * Given a URL, sets up a connection and gets the HTTP response body from the server.
-         * If the network request is successful, it returns the response body in String form. Otherwise,
-         * it will throw an IOException.
-         */
-        private String downloadUrl(URL url) throws IOException {
-            InputStream stream = null;
-            HttpsURLConnection connection = null;
-            String result = null;
-            try {
-                connection = (HttpsURLConnection) url.openConnection();
-//                connection.setReadTimeout(3000);
 
-                connection.setConnectTimeout(3000);
-                connection.setRequestMethod("GET");
-                connection.setDoInput(true);
+        private InputStream downloadUrl(String urlString) throws IOException {
+            URL url = new URL(urlString);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(10000 /* milliseconds */);
+            conn.setConnectTimeout(15000 /* milliseconds */);
+            conn.setRequestMethod("GET");
+            conn.setDoInput(true);
 
-                // Open communications link (network traffic occurs here).
-                connection.connect();
-                publishProgress(DownloadCallback.Progress.CONNECT_SUCCESS);
-                int responseCode = connection.getResponseCode();
-                if (responseCode != HttpsURLConnection.HTTP_OK) {
-                    throw new IOException("HTTP error code: " + responseCode);
-                }
-                // Retrieve the response body as an InputStream.
-                stream = connection.getInputStream();
-                publishProgress(DownloadCallback.Progress.GET_INPUT_STREAM_SUCCESS, 0);
-                if (stream != null) {
-                    result = readStream(stream);
-
-                    publishProgress(DownloadCallback.Progress.PROCESS_INPUT_STREAM_SUCCESS, 0);
-                }
-            } finally {
-                // Close Stream and disconnect HTTPS connection.
-                if (stream != null) {
-                    stream.close();
-                }
-                if (connection != null) {
-                    connection.disconnect();
-                }
-            }
-
-            return result;
+            conn.connect();
+            return conn.getInputStream();
         }
 
-        /**
-         * Converts the contents of an InputStream to a String.
-         */
-        private String readStream(InputStream stream) throws IOException {
-            BufferedReader r = new BufferedReader(new InputStreamReader(stream));
-            StringBuilder total = new StringBuilder();
-            for (String line; (line = r.readLine()) != null; ) {
-                total.append(line).append('\n');
-            }
-            System.out.println(total.length());
-            return total.toString();
-        }
+
     }
 }
 

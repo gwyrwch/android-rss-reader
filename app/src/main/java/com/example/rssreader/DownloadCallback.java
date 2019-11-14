@@ -2,6 +2,11 @@ package com.example.rssreader;
 
 import android.net.NetworkInfo;
 
+import com.example.rssreader.XMLParser.XMLItem;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public interface DownloadCallback {
     interface Progress {
         int ERROR = -1;
@@ -16,6 +21,8 @@ public interface DownloadCallback {
      * Indicates that the callback handler needs to update its appearance or information based on
      * the result of the task. Expected to be called from the main thread.
      */
+    void updateFromDownload(ArrayList<XMLItem> result);
+
     void updateFromDownload(String result);
 
     /**

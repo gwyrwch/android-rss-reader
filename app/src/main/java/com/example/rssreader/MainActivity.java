@@ -20,11 +20,13 @@ import android.view.MenuItem;
 
 import com.example.rssreader.Models.RSSItem;
 import com.example.rssreader.ViewModels.ItemViewModel;
+import com.example.rssreader.XMLParser.XMLItem;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.transform.Transformer;
@@ -35,6 +37,7 @@ import javax.xml.transform.stream.StreamResult;
 public class MainActivity extends AppCompatActivity implements DownloadCallback {
     private ItemViewModel viewModel;
     private static final String DEBUG_TAG = "NetworkStatus";
+    private ItemListAdapter adapter;
 
     private NetworkFragment mNetworkFragment;
     private boolean mDownloading = false;
@@ -45,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
         setContentView(R.layout.activity_main);
 
         RecyclerView recyclerView = findViewById(R.id.recyclerview);
-        final ItemListAdapter adapter = new ItemListAdapter(this);
+        adapter = new ItemListAdapter(this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -61,14 +64,7 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
         Log.d(DEBUG_TAG, String.valueOf(isOnline()));
 
 
-        mNetworkFragment = NetworkFragment.getInstance(getSupportFragmentManager(), "https://news.tut.by/rss/press.rss");
-        startDownload();
-
-        for (int i = 0; i < 100; i++) {
-            System.out.println(i % 50);
-        }
-
-        finishDownloading();
+        mNetworkFragment = NetworkFragment.getInstance(getSupportFragmentManager(), "https://lenta.ru/rss/news");
     }
 
     @Override
@@ -115,6 +111,19 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
     public void updateFromDownload(String result) {
         if (result != null) {
             System.out.println(result.length());
+            System.out.println(result);
+
+        } else {
+            Log.d("RESULT1", "connection error");
+//            mDataText.setText(getString("connection error"));
+        }
+    }
+
+    @Override
+    public void updateFromDownload(ArrayList<XMLItem> result) {
+        if (result != null) {
+//            System.out.println(result.length());
+            System.out.println(result);
 
         } else {
             Log.d("RESULT1", "connection error");
