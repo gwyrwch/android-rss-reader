@@ -2,6 +2,10 @@ package com.example.rssreader.XMLParser;
 
 import android.util.Xml;
 
+import com.example.rssreader.Models.RSSItem;
+import com.example.rssreader.Utilities.OffsetDateTimeConverter;
+import com.example.rssreader.Utilities.OffsetDateTimeToStringConverter;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -13,7 +17,7 @@ import java.util.List;
 public class RSSXmlParser {
     private static final String namespaces = null;
 
-    public List<XMLItem> parse(InputStream in) throws XmlPullParserException, IOException {
+    public List<RSSItem> parse(InputStream in) throws XmlPullParserException, IOException {
         try {
             XmlPullParser parser = Xml.newPullParser();
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
@@ -27,9 +31,9 @@ public class RSSXmlParser {
         }
     }
 
-    private ArrayList<XMLItem> readRSS(XmlPullParser parser)
+    private ArrayList<RSSItem> readRSS(XmlPullParser parser)
             throws XmlPullParserException, IOException {
-        ArrayList<XMLItem> items = new ArrayList<>();
+        ArrayList<RSSItem> items = new ArrayList<>();
         parser.require(XmlPullParser.START_TAG, null, "rss");
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
@@ -45,8 +49,8 @@ public class RSSXmlParser {
         return items;
     }
 
-    private List<XMLItem> readChannel(XmlPullParser parser) throws IOException, XmlPullParserException {
-        List<XMLItem> items = new ArrayList<>();
+    private List<RSSItem> readChannel(XmlPullParser parser) throws IOException, XmlPullParserException {
+        List<RSSItem> items = new ArrayList<>();
 
         parser.require(XmlPullParser.START_TAG, namespaces, "channel");
 
@@ -66,17 +70,10 @@ public class RSSXmlParser {
             }
         } while (!parser.getName().equals("channel"));
 
-        System.out.println("tag:" + parser.getName());
-//        parser.nextTag();
-        System.out.println("next tag:" + parser.getName());
-
-//        System.out.println(parser.getAttributeName(1));
-//        System.out.println(parser.getAttributeName(3));
-
         return items;
     }
 
-    private XMLItem readItem(XmlPullParser parser) throws IOException, XmlPullParserException {
+    private RSSItem readItem(XmlPullParser parser) throws IOException, XmlPullParserException {
         parser.require(XmlPullParser.START_TAG, namespaces, "item");
         String title = null;
         String link = null;
@@ -96,18 +93,22 @@ public class RSSXmlParser {
                     link = readLink(parser);
                     break;
                 case "description":
-                    image = readImage(parser);
                     description = readDescription(parser);
                     break;
                 case "pubDate":
+                    System.out.println("in pb date:");
                     pubDate = readPubDate(parser);
+                    System.out.println(pubDate);
+                    break;
+                case "enclosure":
+                    image = readImage(parser);
                     break;
                 default:
                     skip(parser);
                     break;
             }
         }
-        return new XMLItem(title, link, image, description, pubDate);
+        return new RSSItem(title, link, image, description, OffsetDateTimeToStringConverter.getDateFromString(pubDate));
     }
 
     private String readTitle(XmlPullParser parser) throws IOException, XmlPullParserException {
@@ -124,12 +125,23 @@ public class RSSXmlParser {
         return pubDate;
     }
 
-    private String readDescription(XmlPullParser parser) {
-        return "";
+    private String readDescription(XmlPullParser parser) throws IOException, XmlPullParserException {
+        parser.require(XmlPullParser.START_TAG, namespaces, "description");
+        String description = getTextFromTag(parser);
+        parser.require(XmlPullParser.END_TAG, namespaces, "description");
+        return description;
     }
 
-    private String readImage(XmlPullParser parser) {
-        return "";
+    private String readImage(XmlPullParser parser) throws IOException, XmlPullParserException {
+        String img = "";
+        parser.require(XmlPullParser.START_TAG, namespaces, "enclosure");
+//        String tag = parser.getName();
+
+        img = parser.getAttributeValue(null, "url");
+        parser.nextTag();
+
+        parser.require(XmlPullParser.END_TAG, namespaces, "enclosure");
+        return img;
     }
 
     private String readLink(XmlPullParser parser) throws IOException, XmlPullParserException {
@@ -142,6 +154,9 @@ public class RSSXmlParser {
      private String getTextFromTag(XmlPullParser parser) throws IOException, XmlPullParserException {
          String result = "";
          if (parser.next() == XmlPullParser.TEXT) {
+             result = parser.getText();
+             parser.nextTag();
+         } else {
              result = parser.getText();
              parser.nextTag();
          }

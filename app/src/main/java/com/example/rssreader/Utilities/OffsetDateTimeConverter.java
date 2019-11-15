@@ -10,7 +10,7 @@ import java.time.ZoneId;
 public class OffsetDateTimeConverter {
 
     @TypeConverter
-    public OffsetDateTime offsetDateTimeFromTimestamp(Long value)  {
+    public static OffsetDateTime offsetDateTimeFromTimestamp(Long value)  {
         Timestamp timestamp = new Timestamp(value);
         Instant instant = timestamp.toInstant();
 
@@ -20,10 +20,8 @@ public class OffsetDateTimeConverter {
 
     @TypeConverter
     public static Long offsetDateTimeToTimestamp(OffsetDateTime date) {
-//        Instant instant = date.toInstant();
-//        Timestamp ts = (Timestamp) Timestamp.from( instant );
-//        return ts.getTime();
-
         return Timestamp.from(date.toInstant()).getTime();
     }
 }
+
+

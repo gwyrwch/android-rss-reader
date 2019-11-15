@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "e869111354cbf6d5cca92f77769d53fe",
+    "identityHash": "c2d0df4fcd090e6c1931fbf3c25d1ce2",
     "entities": [
       {
         "tableName": "RSSItem",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`rssItem_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `publicationDate` INTEGER, `title` TEXT, `imagePath` TEXT, `author` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`rssItem_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT, `link` TEXT, `image` TEXT, `description` TEXT, `pubDate` INTEGER, `publicationDate` INTEGER)",
         "fields": [
           {
             "fieldPath": "id",
@@ -15,27 +15,39 @@
             "notNull": true
           },
           {
-            "fieldPath": "publicationDate",
-            "columnName": "publicationDate",
-            "affinity": "INTEGER",
-            "notNull": false
-          },
-          {
             "fieldPath": "title",
             "columnName": "title",
             "affinity": "TEXT",
             "notNull": false
           },
           {
-            "fieldPath": "imagePath",
-            "columnName": "imagePath",
+            "fieldPath": "link",
+            "columnName": "link",
             "affinity": "TEXT",
             "notNull": false
           },
           {
-            "fieldPath": "author",
-            "columnName": "author",
+            "fieldPath": "image",
+            "columnName": "image",
             "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "pubDate",
+            "columnName": "pubDate",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "publicationDate",
+            "columnName": "publicationDate",
+            "affinity": "INTEGER",
             "notNull": false
           }
         ],
@@ -52,7 +64,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e869111354cbf6d5cca92f77769d53fe')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c2d0df4fcd090e6c1931fbf3c25d1ce2')"
     ]
   }
 }

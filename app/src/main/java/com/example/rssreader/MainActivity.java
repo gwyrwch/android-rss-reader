@@ -1,43 +1,27 @@
 package com.example.rssreader;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
-import android.net.Network;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.example.rssreader.Models.RSSItem;
 import com.example.rssreader.ViewModels.ItemViewModel;
-import com.example.rssreader.XMLParser.XMLItem;
+import com.example.rssreader.Models.RSSItem;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 public class MainActivity extends AppCompatActivity implements DownloadCallback {
     private ItemViewModel viewModel;
     private static final String DEBUG_TAG = "NetworkStatus";
-    private ItemListAdapter adapter;
+    private XMLItemListAdapter adapter;
 
     private NetworkFragment mNetworkFragment;
     private boolean mDownloading = false;
@@ -48,23 +32,31 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
         setContentView(R.layout.activity_main);
 
         RecyclerView recyclerView = findViewById(R.id.recyclerview);
-        adapter = new ItemListAdapter(this);
+        adapter = new XMLItemListAdapter(this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         viewModel = ViewModelProviders.of(this).get(ItemViewModel.class);
 
-        viewModel.getAllItemsByDate().observe(this, new Observer<List<RSSItem>>() {
-            @Override
-            public void onChanged(@Nullable final List<RSSItem> rssItems) {
-                adapter.setItems(rssItems);
-            }
-        });
+//        viewModel.getAllItemsByDate().observe(this, new Observer<List<RSSItem>>() {
+//            @Override
+//            public void onChanged(@Nullable final List<RSSItem> rssItems) {
+//                adapter.setItems(rssItems);
+//            }
+//        });
+
+//        adapter.setItems();
 
         Log.d(DEBUG_TAG, String.valueOf(isOnline()));
 
 
         mNetworkFragment = NetworkFragment.getInstance(getSupportFragmentManager(), "https://lenta.ru/rss/news");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startDownload();
     }
 
     @Override
@@ -76,10 +68,8 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            // When the user clicks FETCH, fetch the first 500 characters of
-            // raw HTML from www.google.com.
             case R.id.fetch_action:
-                startDownload();
+                //
                 return true;
             // Clear the text and cancel download.
             case R.id.clear_action:
@@ -114,16 +104,19 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
             System.out.println(result);
 
         } else {
-            Log.d("RESULT1", "connection error");
+            Log.d("RESULT", "connection error");
 //            mDataText.setText(getString("connection error"));
         }
     }
 
     @Override
-    public void updateFromDownload(ArrayList<XMLItem> result) {
+    public void updateFromDownload(ArrayList<RSSItem> result) {
         if (result != null) {
 //            System.out.println(result.length());
-            System.out.println(result);
+            System.out.println("pubdate: " + result.get(0).pubDate);
+            System.out.println("desc: " + result.get(0).description);
+            System.out.println(result.get(0).link);
+            adapter.setItems(result);
 
         } else {
             Log.d("RESULT1", "connection error");

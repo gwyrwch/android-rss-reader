@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
-    app:strokeColor="@color/colorAccent"
+    app:strokeColor="#800F70"
     app:strokeWidth="1dp"
     app:cardCornerRadius="10dp"
     android:background="#FFFFFF"
@@ -21,10 +21,24 @@
         android:orientation="vertical"
         android:layout_margin="5dp">
 
-
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/titleTextView"
-            android:layout_width="363dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceHeadline6"
+            android:paddingLeft="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="img desc" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/pubDateTextView"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?attr/textAppearanceHeadline6"
             android:paddingLeft="10dp"

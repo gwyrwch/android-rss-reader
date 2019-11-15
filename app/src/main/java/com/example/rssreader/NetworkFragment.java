@@ -10,8 +10,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.example.rssreader.Models.RSSItem;
 import com.example.rssreader.XMLParser.RSSXmlParser;
-import com.example.rssreader.XMLParser.XMLItem;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -113,9 +113,9 @@ public class NetworkFragment extends Fragment {
          * doInBackground().
          */
         class Result {
-            public List<XMLItem> resultValue;
+            public List<RSSItem> resultValue;
             public Exception exception;
-            public Result(List<XMLItem> resultVal) {
+            public Result(List<RSSItem> resultVal) {
                 resultValue = resultVal;
             }
             public Result(Exception exc) {
@@ -134,7 +134,7 @@ public class NetworkFragment extends Fragment {
                         (networkInfo.getType() != ConnectivityManager.TYPE_WIFI
                                 && networkInfo.getType() != ConnectivityManager.TYPE_MOBILE)) {
                     // If no connectivity, cancel task and update Callback with null data.
-                    downloadCallback.updateFromDownload(new ArrayList<XMLItem>());
+                    downloadCallback.updateFromDownload(new ArrayList<RSSItem>());
                     cancel(true);
                 }
             }
@@ -152,7 +152,7 @@ public class NetworkFragment extends Fragment {
                     InputStream stream = downloadUrl(urlString);
 
                     RSSXmlParser xmlParser = new RSSXmlParser();
-                    List<XMLItem> items = xmlParser.parse(stream);
+                    List<RSSItem> items = xmlParser.parse(stream);
 
 
                     if (items.size() != 0) {
@@ -187,7 +187,7 @@ public class NetworkFragment extends Fragment {
                 if (result.exception != null) {
                     downloadCallback.updateFromDownload(result.exception.getMessage());
                 } else if (result.resultValue != null) {
-                    downloadCallback.updateFromDownload((ArrayList<XMLItem>)result.resultValue);
+                    downloadCallback.updateFromDownload((ArrayList<RSSItem>)result.resultValue);
                 }
                 downloadCallback.finishDownloading();
             }
@@ -204,7 +204,7 @@ public class NetworkFragment extends Fragment {
         private InputStream downloadUrl(String urlString) throws IOException {
             URL url = new URL(urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(10000 /* milliseconds */);
+//            conn.setReadTimeout(10000 /* milliseconds */);
             conn.setConnectTimeout(15000 /* milliseconds */);
             conn.setRequestMethod("GET");
             conn.setDoInput(true);

@@ -14,16 +14,21 @@ public class RSSItem {
     @ColumnInfo(name = "rssItem_id")
     public long id;
 
-    public OffsetDateTime publicationDate;
-    public String title;
-    public String imagePath;
-    public String author;
 
-    public RSSItem(String title, String imagePath, String author, OffsetDateTime publicationDate) {
+    public final String title;
+    public final String link;
+    public final String image;
+    public final String description;
+    public final OffsetDateTime pubDate;
+    public OffsetDateTime publicationDate;
+
+
+    public RSSItem(String title, String link, String image, String description, OffsetDateTime pubDate) {
         this.title = title;
-        this.imagePath = imagePath;
-        this.author = author;
-        this.publicationDate = publicationDate;
+        this.link = link;
+        this.image = image;
+        this.description = description;
+        this.pubDate = pubDate;
 
     }
 

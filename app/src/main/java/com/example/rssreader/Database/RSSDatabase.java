@@ -12,6 +12,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.example.rssreader.Models.RSSItem;
 import com.example.rssreader.Utilities.OffsetDateTimeConverter;
+import com.example.rssreader.Utilities.OffsetDateTimeToStringConverter;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
@@ -61,17 +62,12 @@ public abstract class RSSDatabase extends RoomDatabase{
         protected Void doInBackground(final Void... params) {
             itemDao.deleteAll();
 
-            RSSItem item = new RSSItem("title", "img", "author",
-                    getDateForRSSItem("Thu, 03 Mar 2016 15:30:00 +0200"));
+            RSSItem item = new RSSItem("title", "link", "img", "desc",
+                    OffsetDateTimeToStringConverter.getDateFromString("Thu, 03 Mar 2016 15:30:00 +0200"));
             item.id = itemDao.insert(item);
 
             return null;
         }
 
-        protected OffsetDateTime getDateForRSSItem(String date) {
-        //        String input = "Thu, 03 Mar 2016 15:30:00 +0200";
-            DateTimeFormatter formatter = DateTimeFormatter.RFC_1123_DATE_TIME ;
-            return OffsetDateTime.parse( date , formatter );
-        }
     }
 }
