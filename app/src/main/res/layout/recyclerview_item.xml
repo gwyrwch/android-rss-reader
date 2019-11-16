@@ -42,6 +42,7 @@
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/titleTextView"
+            android:textColor="@color/colorAccent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -52,6 +53,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/descriptionTextView"
             android:breakStrategy="simple"
+            android:typeface="serif"
+            android:textStyle="bold"
         />
 
         <com.google.android.material.textview.MaterialTextView
@@ -67,7 +70,9 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/view"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintVertical_bias="1.0"
+            android:textStyle="italic"
+            android:typeface="serif"/>
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/pubDateTextView"
@@ -79,7 +84,6 @@
             android:layout_marginBottom="4dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textStyle="italic"
-
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

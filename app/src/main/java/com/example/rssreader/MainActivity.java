@@ -91,21 +91,18 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.mail, menu);
+        getMenuInflater().inflate(R.menu.settings, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.fetch_action:
+            case R.id.settings_action:
                 // fixme: make settings StartActivityForResult and return url string
                 return true;
             // Clear the text and cancel download.
-            case R.id.clear_action:
-                finishDownloading();
-                System.out.println("clear to empty text");
-                return true;
+
         }
         return false;
     }
