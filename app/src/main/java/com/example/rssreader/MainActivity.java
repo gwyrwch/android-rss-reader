@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -20,16 +21,21 @@ import android.widget.Toast;
 
 import com.example.rssreader.ViewModels.ItemViewModel;
 import com.example.rssreader.Models.RSSItem;
+import com.google.android.material.snackbar.Snackbar;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity implements DownloadCallback {
     public static final int EDIT_RSS_URL_REQUEST_CODE = 1;
     private static String RSS_URL = "https://medium.com/feed/the-story";
     private static final String DEBUG_TAG = "NetworkStatus";
 
+    private SharedPreferences prefs = null;
 
     private ItemViewModel viewModel;
     private XMLItemListAdapter adapter;
@@ -37,11 +43,21 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
     private NetworkFragment mNetworkFragment;
     private boolean mDownloading = false;
     RecyclerView recyclerView;
+    private Timer timer;
+
+    enum State {
+        LAUNCH,
+        ONLINE,
+        OFFLINE
+    };
+    private State onlineState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        onlineState = State.LAUNCH;
 
         recyclerView = findViewById(R.id.recyclerview);
         adapter = new XMLItemListAdapter(this,new View.OnClickListener() {
@@ -59,39 +75,70 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
             }
         });
 
-
-
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         viewModel = ViewModelProviders.of(this).get(ItemViewModel.class);
 
+        mNetworkFragment = NetworkFragment.getInstance(getSupportFragmentManager(), RSS_URL);
 
-        Log.d(DEBUG_TAG, String.valueOf(isOnline()));
+        Log.d(DEBUG_TAG, String.valueOf(onlineState));
 
+        prefs = getSharedPreferences("com.mycompany.myAppName", MODE_PRIVATE);
 
 //        mNetworkFragment = NetworkFragment.getInstance(getSupportFragmentManager(), "https://lenta.ru/rss/news");
-        if (isOnline())
-            mNetworkFragment = NetworkFragment.getInstance(getSupportFragmentManager(), RSS_URL);
+//        if (isOnline())
+//            mNetworkFragment = NetworkFragment.getInstance(getSupportFragmentManager(), RSS_URL);
 //        mNetworkFragment = NetworkFragment.getInstance(getSupportFragmentManager(), "https://news.tut.by/rss/press.rss");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (isOnline()) {
-            startDownload();
-        }
-        else {
-            viewModel.getAllItemsByDate(false).observe(this, new Observer<List<RSSItem>>() {
-                @Override
-                public void onChanged(@Nullable final List<RSSItem> rssItems) {
-                    if (rssItems != null)
-                        adapter.setItems(rssItems);
-                }
-            });
 
+        if (prefs.getBoolean("firstrun", true)) {
+            prefs.edit().putBoolean("firstrun", false).apply();
+
+            Intent intent = new Intent(this, SettingsActivity.class);
+
+            intent.putExtra(SettingsActivity.URL, RSS_URL);
+            startActivityForResult(intent, EDIT_RSS_URL_REQUEST_CODE);
         }
+
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                State state = isOnline();
+
+                if (state != onlineState) {
+                    onlineState = state;
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (onlineState == State.ONLINE) {
+                                startDownload();
+                            } else {
+                                viewModel.getAllItemsByDate(false).observe(MainActivity.this, new Observer<List<RSSItem>>() {
+                                    @Override
+                                    public void onChanged(@Nullable final List<RSSItem> rssItems) {
+                                        if (rssItems != null)
+                                            adapter.setItems(rssItems);
+                                    }
+                                });
+                            }
+
+                            Toast.makeText(
+                                    getApplicationContext(),
+                                    onlineState == State.ONLINE ? "Online" : "Offline",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        }, 0, 1000);
+
     }
 
 
@@ -114,11 +161,16 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
         return false;
     }
 
-    public boolean isOnline() {
+    public State isOnline() {
         ConnectivityManager connMgr = (ConnectivityManager)
                 getSystemService(Context.CONNECTIVITY_SERVICE);
+
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        return (networkInfo != null && networkInfo.isConnected());
+        if (networkInfo != null && networkInfo.isConnected()) {
+            return State.ONLINE;
+        } else {
+            return State.OFFLINE;
+        }
     }
 
     // fixme: this two methods are familiar
@@ -200,7 +252,6 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
         if(requestCode == EDIT_RSS_URL_REQUEST_CODE && resultCode == RESULT_OK) {
             RSS_URL = data.getStringExtra(SettingsActivity.URL);
             mNetworkFragment.setUrlString(RSS_URL);
-            startDownload();
         } else {
             System.out.println(requestCode);
             Toast.makeText(
