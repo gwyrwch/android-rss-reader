@@ -18,7 +18,6 @@ public class XMLItemListAdapter extends RecyclerView.Adapter<XMLItemListAdapter.
         private final TextView itemTitleView, itemPubDateView;
         private final ImageView itemImageView;
 
-
         private XMLItemViewHolder(View itemView) {
             super(itemView);
             itemTitleView = itemView.findViewById(R.id.titleTextView);
@@ -28,15 +27,24 @@ public class XMLItemListAdapter extends RecyclerView.Adapter<XMLItemListAdapter.
     }
 
     private final LayoutInflater inflater;
-    private List<RSSItem> items; // Cached copy of words
 
-    XMLItemListAdapter(Context context) {
+    public List<RSSItem> getItems() {
+        return items;
+    }
+
+    private List<RSSItem> items;
+    private View.OnClickListener itemOnClickListener;
+
+    XMLItemListAdapter(Context context, View.OnClickListener itemOnClickListener) {
         inflater = LayoutInflater.from(context);
+        this.itemOnClickListener = itemOnClickListener;
     }
 
     @Override
     public XMLItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = inflater.inflate(R.layout.recyclerview_item, parent, false);
+        itemView.setOnClickListener(itemOnClickListener);
+        itemView.setTag(this);
         return new XMLItemViewHolder(itemView);
     }
 

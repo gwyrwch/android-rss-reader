@@ -31,11 +31,4 @@ public class RSSItem {
         this.pubDate = pubDate;
 
     }
-
-    // fixme: converter from string to OffsetDateTime
-//    protected OffsetDateTime getDateForRSSItem(String date) {
-////        String input = "Thu, 03 Mar 2016 15:30:00 +0200";
-//        DateTimeFormatter formatter = DateTimeFormatter.RFC_1123_DATE_TIME ;
-//        return OffsetDateTime.parse( date , formatter );
-//    }
 }

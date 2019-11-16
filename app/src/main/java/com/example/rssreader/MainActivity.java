@@ -6,12 +6,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.example.rssreader.ViewModels.ItemViewModel;
 import com.example.rssreader.Models.RSSItem;
@@ -25,14 +27,31 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
 
     private NetworkFragment mNetworkFragment;
     private boolean mDownloading = false;
+    RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        RecyclerView recyclerView = findViewById(R.id.recyclerview);
-        adapter = new XMLItemListAdapter(this);
+        recyclerView = findViewById(R.id.recyclerview);
+        adapter = new XMLItemListAdapter(this,new View.OnClickListener() {
+            // when the note in the MainActivity is tapped
+            @Override
+            public void onClick(View v) {
+                int itemPosition = recyclerView.getChildLayoutPosition(v);
+                RSSItem itemClicked = ((XMLItemListAdapter) v.getTag()).getItems().get(itemPosition);
+
+                Intent intent = new Intent(MainActivity.this, WebItemActivity.class);
+
+                intent.putExtra(WebItemActivity.ITEM_LINK, itemClicked.link);
+
+                startActivity(intent);
+            }
+        });
+
+
+
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -56,7 +75,9 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
     @Override
     protected void onResume() {
         super.onResume();
-        startDownload();
+        if (isOnline())
+            startDownload();
+
     }
 
     @Override
@@ -86,44 +107,7 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         return (networkInfo != null && networkInfo.isConnected());
     }
-
-
-
-    private void startDownload() {
-        if (!mDownloading && mNetworkFragment != null) {
-            // Execute the async download.
-            mNetworkFragment.startDownload();
-            mDownloading = true;
-        }
-    }
-
-    @Override
-    public void updateFromDownload(String result) {
-        if (result != null) {
-            System.out.println(result.length());
-            System.out.println(result);
-
-        } else {
-            Log.d("RESULT", "connection error");
-//            mDataText.setText(getString("connection error"));
-        }
-    }
-
-    @Override
-    public void updateFromDownload(ArrayList<RSSItem> result) {
-        if (result != null) {
-//            System.out.println(result.length());
-            System.out.println("pubdate: " + result.get(0).pubDate);
-            System.out.println("desc: " + result.get(0).description);
-            System.out.println(result.get(0).link);
-            adapter.setItems(result);
-
-        } else {
-            Log.d("RESULT1", "connection error");
-//            mDataText.setText(getString("connection error"));
-        }
-    }
-
+    // fixme: this two methods are familiar
     @Override
     public NetworkInfo getActiveNetworkInfo() {
         ConnectivityManager connectivityManager =
@@ -131,6 +115,31 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         return networkInfo;
     }
+
+    private void startDownload() {
+        if (!mDownloading && mNetworkFragment != null) {
+            mNetworkFragment.startDownload();
+            mDownloading = true;
+        }
+    }
+
+    @Override
+    public void updateFromDownload(String result) {
+        Log.d("RESULT", "some errors occurred with result");
+    }
+
+    @Override
+    public void updateFromDownload(ArrayList<RSSItem> result) {
+        if (result != null) {
+            adapter.setItems(result);
+
+
+        } else {
+            Log.d("RESULT", "rss list is null");
+//            mDataText.setText(getString("connection error"));
+        }
+    }
+
 
     @Override
     public void finishDownloading() {
