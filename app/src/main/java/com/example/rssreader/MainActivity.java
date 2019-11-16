@@ -16,16 +16,22 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.rssreader.ViewModels.ItemViewModel;
 import com.example.rssreader.Models.RSSItem;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements DownloadCallback {
-    private ItemViewModel viewModel;
+    public static final int EDIT_RSS_URL_REQUEST_CODE = 1;
+    private static String RSS_URL = "https://medium.com/feed/the-story";
     private static final String DEBUG_TAG = "NetworkStatus";
+
+
+    private ItemViewModel viewModel;
     private XMLItemListAdapter adapter;
 
     private NetworkFragment mNetworkFragment;
@@ -66,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
 
 //        mNetworkFragment = NetworkFragment.getInstance(getSupportFragmentManager(), "https://lenta.ru/rss/news");
         if (isOnline())
-            mNetworkFragment = NetworkFragment.getInstance(getSupportFragmentManager(), "https://medium.com/feed/the-story");
+            mNetworkFragment = NetworkFragment.getInstance(getSupportFragmentManager(), RSS_URL);
 //        mNetworkFragment = NetworkFragment.getInstance(getSupportFragmentManager(), "https://news.tut.by/rss/press.rss");
     }
 
@@ -97,12 +103,13 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.settings_action:
-                // fixme: make settings StartActivityForResult and return url string
-                return true;
-            // Clear the text and cancel download.
+        if (item.getItemId() == R.id.settings_action) {
+            Intent intent = new Intent(this, SettingsActivity.class);
 
+            intent.putExtra(SettingsActivity.URL, RSS_URL);
+            startActivityForResult(intent, EDIT_RSS_URL_REQUEST_CODE);
+
+            return true;
         }
         return false;
     }
@@ -182,6 +189,24 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
             case Progress.PROCESS_INPUT_STREAM_SUCCESS:
                 Log.d("process input stream success", "process input stream success in onProgressUpdate");
                 break;
+        }
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == EDIT_RSS_URL_REQUEST_CODE && resultCode == RESULT_OK) {
+            RSS_URL = data.getStringExtra(SettingsActivity.URL);
+            mNetworkFragment.setUrlString(RSS_URL);
+            startDownload();
+        } else {
+            System.out.println(requestCode);
+            Toast.makeText(
+                    getApplicationContext(),
+                    "something went wrong",
+                    Toast.LENGTH_LONG).show();
         }
     }
 }

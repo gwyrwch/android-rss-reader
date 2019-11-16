@@ -29,6 +29,11 @@ public class NetworkFragment extends Fragment {
 
     private DownloadCallback downloadCallback;
     private DownloadTask downloadTask;
+
+    public void setUrlString(String urlString) {
+        this.urlString = urlString;
+    }
+
     private String urlString;
 
     /**
@@ -212,6 +217,8 @@ public class NetworkFragment extends Fragment {
             conn.connect();
             return conn.getInputStream();
         }
+
+
 
 
     }

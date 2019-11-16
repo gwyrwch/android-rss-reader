@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">News</string>
+    <string name="rss_url">RSS url</string>
+    <string name="save">save</string>
 </resources>
