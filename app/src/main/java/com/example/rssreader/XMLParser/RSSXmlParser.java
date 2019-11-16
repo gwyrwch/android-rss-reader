@@ -96,9 +96,7 @@ public class RSSXmlParser {
                     description = readDescription(parser);
                     break;
                 case "pubDate":
-                    System.out.println("in pb date:");
                     pubDate = readPubDate(parser);
-                    System.out.println(pubDate);
                     break;
                 case "enclosure":
                     image = readImage(parser);

@@ -15,7 +15,7 @@ public class WebItemActivity extends AppCompatActivity {
 
         String url = getIntent().getStringExtra(ITEM_LINK);
 
-        WebView myWebView = (WebView) findViewById(R.id.item_webview);
+        WebView myWebView = findViewById(R.id.item_webview);
         myWebView.loadUrl(url);
 
         finish();

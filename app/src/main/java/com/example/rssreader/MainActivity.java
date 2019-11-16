@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
 
 
         mNetworkFragment = NetworkFragment.getInstance(getSupportFragmentManager(), "https://lenta.ru/rss/news");
+//        mNetworkFragment = NetworkFragment.getInstance(getSupportFragmentManager(), "https://news.tut.by/rss/press.rss");
     }
 
     @Override

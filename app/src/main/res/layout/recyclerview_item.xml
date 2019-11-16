@@ -11,49 +11,76 @@
     app:strokeWidth="1dp"
     app:cardCornerRadius="10dp"
     android:background="#FFFFFF"
+
     >
-
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="top"
-        android:background="#FFFFFF"
-        android:orientation="vertical"
-        android:layout_margin="5dp">
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/titleTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceHeadline6"
-            android:paddingLeft="10dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toTopOf="@+id/view"
+            app:layout_constraintDimensionRatio="H,2:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@android:color/darker_gray" />
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="#FFFFFF"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/titleTextView" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/titleTextView"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:contentDescription="img desc" />
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/descriptionTextView"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/descriptionTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="4dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            app:layout_constraintBottom_toTopOf="@+id/pubDateTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view"
+            app:layout_constraintVertical_bias="1.0" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/pubDateTextView"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:textColor="@color/colorAccent"
             android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceHeadline6"
-            android:paddingLeft="10dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="4dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textStyle="italic"
 
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/authorTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="2dp"
-            android:textAppearance="?attr/textAppearanceBody2" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-    </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>
