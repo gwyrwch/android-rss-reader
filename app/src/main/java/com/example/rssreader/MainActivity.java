@@ -1,6 +1,8 @@
 package com.example.rssreader;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,6 +21,7 @@ import com.example.rssreader.ViewModels.ItemViewModel;
 import com.example.rssreader.Models.RSSItem;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements DownloadCallback {
     private ItemViewModel viewModel;
@@ -57,29 +60,34 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
 
         viewModel = ViewModelProviders.of(this).get(ItemViewModel.class);
 
-//        viewModel.getAllItemsByDate().observe(this, new Observer<List<RSSItem>>() {
-//            @Override
-//            public void onChanged(@Nullable final List<RSSItem> rssItems) {
-//                adapter.setItems(rssItems);
-//            }
-//        });
-
-//        adapter.setItems();
 
         Log.d(DEBUG_TAG, String.valueOf(isOnline()));
 
 
-        mNetworkFragment = NetworkFragment.getInstance(getSupportFragmentManager(), "https://lenta.ru/rss/news");
+//        mNetworkFragment = NetworkFragment.getInstance(getSupportFragmentManager(), "https://lenta.ru/rss/news");
+        if (isOnline())
+            mNetworkFragment = NetworkFragment.getInstance(getSupportFragmentManager(), "https://medium.com/feed/the-story");
 //        mNetworkFragment = NetworkFragment.getInstance(getSupportFragmentManager(), "https://news.tut.by/rss/press.rss");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (isOnline())
+        if (isOnline()) {
             startDownload();
+        }
+        else {
+            viewModel.getAllItemsByDate(false).observe(this, new Observer<List<RSSItem>>() {
+                @Override
+                public void onChanged(@Nullable final List<RSSItem> rssItems) {
+                    if (rssItems != null)
+                        adapter.setItems(rssItems);
+                }
+            });
 
+        }
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -91,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.fetch_action:
-                //
+                // fixme: make settings StartActivityForResult and return url string
                 return true;
             // Clear the text and cancel download.
             case R.id.clear_action:
@@ -108,6 +116,7 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         return (networkInfo != null && networkInfo.isConnected());
     }
+
     // fixme: this two methods are familiar
     @Override
     public NetworkInfo getActiveNetworkInfo() {
@@ -132,12 +141,19 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
     @Override
     public void updateFromDownload(ArrayList<RSSItem> result) {
         if (result != null) {
-            adapter.setItems(result);
-
-
+            viewModel.deleteAllItems();
+            viewModel.setAllItemsByDate(result);
+            viewModel.getAllItemsByDate(true).observe(this, new Observer<List<RSSItem>>() {
+                @Override
+                public void onChanged(@Nullable final List<RSSItem> rssItems) {
+                    if (rssItems != null)
+                        adapter.setItems(rssItems);
+                }
+            });
+            for (int i = 0; i < Math.min(10, result.size()); i++)
+                viewModel.insert(result.get(i));
         } else {
             Log.d("RESULT", "rss list is null");
-//            mDataText.setText(getString("connection error"));
         }
     }
 

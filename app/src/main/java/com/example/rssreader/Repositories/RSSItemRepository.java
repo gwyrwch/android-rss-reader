@@ -64,4 +64,22 @@ public class RSSItemRepository {
             return null;
         }
     }
+
+    public void deleteAll() {
+        new deleteAllAsyncTask(itemDao).execute();
+    }
+
+    private static class deleteAllAsyncTask extends AsyncTask<Void, Void, Void> {
+        private RSSItemDao asyncRSSItemDao;
+
+        deleteAllAsyncTask(RSSItemDao dao) {
+            asyncRSSItemDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            asyncRSSItemDao.deleteAll();
+            return null;
+        }
+    }
 }

@@ -101,6 +101,11 @@ public class RSSXmlParser {
                 case "enclosure":
                     image = readImage(parser);
                     break;
+                case "content:encoded":
+                    String content = getTextFromTag(parser);
+                    image = readImageFromContent(content);
+                    description = readDescriptionFromContent(content);
+                    break;
                 default:
                     skip(parser);
                     break;
@@ -108,6 +113,19 @@ public class RSSXmlParser {
         }
         return new RSSItem(title, link, image, description, OffsetDateTimeToStringConverter.getDateFromString(pubDate));
     }
+
+    private String readImageFromContent(String content) {
+        int start = content.indexOf("src=\"");
+        int end = content.indexOf("\"", start + 5);
+        return content.substring(start + 5, end);
+    }
+
+    private String readDescriptionFromContent(String content) {
+        int start = content.indexOf("<h4>");
+        int end = content.indexOf("</h4>");
+        return  content.substring(start + 4, end);
+    }
+
 
     private String readTitle(XmlPullParser parser) throws IOException, XmlPullParserException {
         parser.require(XmlPullParser.START_TAG, namespaces, "title");

@@ -73,11 +73,15 @@ public class XMLItemListAdapter extends RecyclerView.Adapter<XMLItemListAdapter.
     }
 
     private String getDescriptionForItem(String fullDescription) {
+        if (fullDescription == null) {
+            return "";
+        }
+        fullDescription = fullDescription.trim();
         String[] words = fullDescription.split(" ");
         StringBuilder res = new StringBuilder();
 
-        for (int i = 0; i < 15; i++) {
-            if(!words[i].equals("\n") &&!words[i].equals("\t"))
+        for (int i = 0; i < Math.min(15, words.length); i++) {
+            if(!words[i].equals("\n") && !words[i].equals("\t"))
                 res.append(words[i]).append(" ");
         }
         res.append("...");

@@ -20,6 +20,9 @@ public class OffsetDateTimeConverter {
 
     @TypeConverter
     public static Long offsetDateTimeToTimestamp(OffsetDateTime date) {
+        if (date == null) {
+            return 0L;
+        }
         return Timestamp.from(date.toInstant()).getTime();
     }
 }
