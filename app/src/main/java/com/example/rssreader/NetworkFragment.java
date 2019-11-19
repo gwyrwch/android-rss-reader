@@ -205,7 +205,6 @@ public class NetworkFragment extends Fragment {
         protected void onCancelled(Result result) {
         }
 
-
         private InputStream downloadUrl(String urlString) throws IOException {
             URL url = new URL(urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();

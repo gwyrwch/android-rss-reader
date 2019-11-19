@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "c2d0df4fcd090e6c1931fbf3c25d1ce2",
+    "identityHash": "37030daf3bd70a9a037cc612ae8020ad",
     "entities": [
       {
         "tableName": "RSSItem",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`rssItem_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT, `link` TEXT, `image` TEXT, `description` TEXT, `pubDate` INTEGER, `publicationDate` INTEGER)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`rssItem_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT, `link` TEXT, `image` TEXT, `description` TEXT, `pubDate` INTEGER, `publicationDate` INTEGER, `bitmap` BLOB)",
         "fields": [
           {
             "fieldPath": "id",
@@ -49,6 +49,12 @@
             "columnName": "publicationDate",
             "affinity": "INTEGER",
             "notNull": false
+          },
+          {
+            "fieldPath": "bitmap",
+            "columnName": "bitmap",
+            "affinity": "BLOB",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -64,7 +70,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c2d0df4fcd090e6c1931fbf3c25d1ce2')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '37030daf3bd70a9a037cc612ae8020ad')"
     ]
   }
 }

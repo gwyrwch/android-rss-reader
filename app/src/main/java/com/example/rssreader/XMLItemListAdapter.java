@@ -1,6 +1,11 @@
 package com.example.rssreader;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.LayerDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +15,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rssreader.Models.RSSItem;
+import com.example.rssreader.Utilities.ByteBitmapConverter;
 import com.example.rssreader.Utilities.OffsetDateTimeToStringConverter;
 
 import java.time.OffsetDateTime;
@@ -31,6 +37,7 @@ public class XMLItemListAdapter extends RecyclerView.Adapter<XMLItemListAdapter.
 
     private final LayoutInflater inflater;
 
+
     public List<RSSItem> getItems() {
         return items;
     }
@@ -41,6 +48,7 @@ public class XMLItemListAdapter extends RecyclerView.Adapter<XMLItemListAdapter.
     XMLItemListAdapter(Context context, View.OnClickListener itemOnClickListener) {
         inflater = LayoutInflater.from(context);
         this.itemOnClickListener = itemOnClickListener;
+
     }
 
     @Override
@@ -55,17 +63,22 @@ public class XMLItemListAdapter extends RecyclerView.Adapter<XMLItemListAdapter.
     public void onBindViewHolder(XMLItemViewHolder holder, int position) {
         if (items != null) {
             RSSItem current = items.get(position);
-            holder.itemTitleView.setText(current.title);
-            holder.itemPubDateView.setText(OffsetDateTimeToStringConverter.getStringFromDate(current.pubDate));
-            holder.itemDescriptionView.setText(getDescriptionForItem(current.description));
+            holder.itemTitleView.setText(current.getTitle());
+            holder.itemPubDateView.setText(OffsetDateTimeToStringConverter.getStringFromDate(current.getPubDate()));
+            holder.itemDescriptionView.setText(getDescriptionForItem(current.getDescription()));
+//            holder.itemImageView.setImageBitmap(ByteBitmapConverter.getBitmapFromBytes(current.getBitmap()));
 
-            ImageDownloader id = new ImageDownloader();
-            id.download(current.image, holder.itemImageView);
+
+//            current.setBitmap(ByteBitmapConverter.getBytesFromBitmap(ImageDownloader.result));
+
+            holder.itemImageView.setImageBitmap(ByteBitmapConverter.getBitmapFromBytes(current.getBitmap()));
+
         } else {
             // Covers the case of data not being ready yet.
             holder.itemTitleView.setText("No news");
         }
     }
+
 
     void setItems(List<RSSItem> rssItems) {
         items = rssItems;

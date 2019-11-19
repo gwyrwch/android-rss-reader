@@ -40,7 +40,7 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemVi
     public void onBindViewHolder(ItemViewHolder holder, int position) {
         if (items != null) {
             RSSItem current = items.get(position);
-            holder.rssItemView.setText(current.title);
+            holder.rssItemView.setText(current.getTitle());
         } else {
             // Covers the case of data not being ready yet.
             holder.rssItemView.setText("No news");

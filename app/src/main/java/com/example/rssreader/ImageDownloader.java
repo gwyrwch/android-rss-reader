@@ -3,8 +3,10 @@ package com.example.rssreader;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.ImageView;
+
+import com.example.rssreader.Models.RSSItem;
+import com.example.rssreader.Utilities.ByteBitmapConverter;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,18 +14,20 @@ import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 
 public class ImageDownloader {
+    public static Bitmap result;
 
-    public void download(String url, ImageView imageView) {
-        BitmapDownloaderTask task = new BitmapDownloaderTask(imageView);
+    public void download(String url, RSSItem item) {
+        result = null;
+        BitmapDownloaderTask task = new BitmapDownloaderTask(item);
         task.execute(url);
     }
 
     static class BitmapDownloaderTask extends AsyncTask<String, Void, Bitmap> {
         private String url;
-        private final WeakReference<ImageView> imageViewReference;
+        private final RSSItem item;
 
-        public BitmapDownloaderTask(ImageView imageView) {
-            imageViewReference = new WeakReference<ImageView>(imageView);
+        public BitmapDownloaderTask(RSSItem item) {
+            this.item = item;
         }
 
         public Bitmap downloadBitmap(String src) {
@@ -56,12 +60,7 @@ public class ImageDownloader {
                 bitmap = null;
             }
 
-            if (imageViewReference != null) {
-                ImageView imageView = imageViewReference.get();
-                if (imageView != null) {
-                    imageView.setImageBitmap(bitmap);
-                }
-            }
+            item.setBitmap(ByteBitmapConverter.getBytesFromBitmap(bitmap));
         }
     }
 }

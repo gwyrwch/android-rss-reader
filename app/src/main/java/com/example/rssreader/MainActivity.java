@@ -10,8 +10,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -23,6 +26,9 @@ import com.example.rssreader.ViewModels.ItemViewModel;
 import com.example.rssreader.Models.RSSItem;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +40,8 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
     public static final int EDIT_RSS_URL_REQUEST_CODE = 1;
     private static String RSS_URL = "https://medium.com/feed/the-story";
     private static final String DEBUG_TAG = "NetworkStatus";
+    private boolean PATH_CHANGED = false;
+
 
     private SharedPreferences prefs = null;
 
@@ -45,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
     RecyclerView recyclerView;
     private Timer timer;
 
-    enum State {
+    public enum State {
         LAUNCH,
         ONLINE,
         OFFLINE
@@ -69,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
 
                 Intent intent = new Intent(MainActivity.this, WebItemActivity.class);
 
-                intent.putExtra(WebItemActivity.ITEM_LINK, itemClicked.link);
+                intent.putExtra(WebItemActivity.ITEM_LINK, itemClicked.getLink());
 
                 startActivity(intent);
             }
@@ -109,33 +117,34 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                State state = isOnline();
+            State state = isOnline();
 
-                if (state != onlineState) {
-                    onlineState = state;
+            if (state != onlineState || PATH_CHANGED) {
+                onlineState = state;
+                PATH_CHANGED = false;
 
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (onlineState == State.ONLINE) {
-                                startDownload();
-                            } else {
-                                viewModel.getAllItemsByDate(false).observe(MainActivity.this, new Observer<List<RSSItem>>() {
-                                    @Override
-                                    public void onChanged(@Nullable final List<RSSItem> rssItems) {
-                                        if (rssItems != null)
-                                            adapter.setItems(rssItems);
-                                    }
-                                });
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                    if (onlineState == State.ONLINE) {
+                        startDownload();
+                    } else {
+                        viewModel.getAllItemsByDate(false).observe(MainActivity.this, new Observer<List<RSSItem>>() {
+                            @Override
+                            public void onChanged(@Nullable final List<RSSItem> rssItems) {
+                            if (rssItems != null)
+                                adapter.setItems(rssItems);
                             }
+                        });
+                    }
 
-                            Toast.makeText(
-                                    getApplicationContext(),
-                                    onlineState == State.ONLINE ? "Online" : "Offline",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
+                    Toast.makeText(
+                        getApplicationContext(),
+                        onlineState == State.ONLINE ? "Online" : "Offline",
+                        Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
             }
         }, 0, 1000);
 
@@ -191,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
 
     @Override
     public void updateFromDownload(String result) {
-        Log.d("RESULT", "some errors occurred with result");
+        Log.d("BAD RESULT", result);
     }
 
     @Override
@@ -206,6 +215,7 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
                         adapter.setItems(rssItems);
                 }
             });
+
             for (int i = 0; i < Math.min(10, result.size()); i++)
                 viewModel.insert(result.get(i));
         } else {
@@ -252,6 +262,8 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
         if(requestCode == EDIT_RSS_URL_REQUEST_CODE && resultCode == RESULT_OK) {
             RSS_URL = data.getStringExtra(SettingsActivity.URL);
             mNetworkFragment.setUrlString(RSS_URL);
+            PATH_CHANGED = true;
+
         } else {
             System.out.println(requestCode);
             Toast.makeText(
@@ -260,4 +272,7 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
                     Toast.LENGTH_LONG).show();
         }
     }
+
+
+
 }
