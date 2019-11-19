@@ -3,17 +3,15 @@ package com.example.rssreader;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.widget.ImageView;
 
 import com.example.rssreader.Models.RSSItem;
 import com.example.rssreader.Utilities.ByteBitmapConverter;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 
-public class ImageDownloader {
+public class BitmapDownloader {
     public static Bitmap result;
 
     public void download(String url, RSSItem item) {
@@ -23,7 +21,6 @@ public class ImageDownloader {
     }
 
     static class BitmapDownloaderTask extends AsyncTask<String, Void, Bitmap> {
-        private String url;
         private final RSSItem item;
 
         public BitmapDownloaderTask(RSSItem item) {
@@ -47,7 +44,6 @@ public class ImageDownloader {
         }
 
         @Override
-        // Actual download method, run in the task thread
         protected Bitmap doInBackground(String... params) {
             // params comes from the execute() call: params[0] is the url.
             return downloadBitmap(params[0]);

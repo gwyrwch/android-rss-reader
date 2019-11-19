@@ -1,11 +1,6 @@
 package com.example.rssreader;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.LayerDrawable;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +13,6 @@ import com.example.rssreader.Models.RSSItem;
 import com.example.rssreader.Utilities.ByteBitmapConverter;
 import com.example.rssreader.Utilities.OffsetDateTimeToStringConverter;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 
 public class XMLItemListAdapter extends RecyclerView.Adapter<XMLItemListAdapter.XMLItemViewHolder>{
@@ -66,10 +60,6 @@ public class XMLItemListAdapter extends RecyclerView.Adapter<XMLItemListAdapter.
             holder.itemTitleView.setText(current.getTitle());
             holder.itemPubDateView.setText(OffsetDateTimeToStringConverter.getStringFromDate(current.getPubDate()));
             holder.itemDescriptionView.setText(getDescriptionForItem(current.getDescription()));
-//            holder.itemImageView.setImageBitmap(ByteBitmapConverter.getBitmapFromBytes(current.getBitmap()));
-
-
-//            current.setBitmap(ByteBitmapConverter.getBytesFromBitmap(ImageDownloader.result));
 
             holder.itemImageView.setImageBitmap(ByteBitmapConverter.getBitmapFromBytes(current.getBitmap()));
 

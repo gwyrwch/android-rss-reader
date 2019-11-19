@@ -1,13 +1,9 @@
 package com.example.rssreader.XMLParser;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.util.Xml;
 
-import com.example.rssreader.ImageDownloader;
+import com.example.rssreader.BitmapDownloader;
 import com.example.rssreader.Models.RSSItem;
-import com.example.rssreader.Utilities.ByteBitmapConverter;
 import com.example.rssreader.Utilities.OffsetDateTimeToStringConverter;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -15,7 +11,6 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -117,16 +112,14 @@ public class RSSXmlParser {
             }
         }
 
-//        GetBitmapFromURLAsync getBitmapFromURLAsync = new GetBitmapFromURLAsync();
-//        getBitmapFromURLAsync.execute(image);
+
         RSSItem newItem = new RSSItem(title, link, image, description,
                 OffsetDateTimeToStringConverter.getDateFromString(pubDate),
                 null);
-        ImageDownloader id = new ImageDownloader();
+        BitmapDownloader id = new BitmapDownloader();
         id.download(image, newItem);
 
         return newItem;
-//                ByteBitmapConverter.getBytesFromBitmap(downloadedBitmap)
     }
 
     private String readImageFromContent(String content) {
@@ -210,36 +203,5 @@ public class RSSXmlParser {
             }
         }
     }
-
-    private Bitmap downloadedBitmap;
-    private class GetBitmapFromURLAsync extends AsyncTask<String, Void, Bitmap> {
-        @Override
-        protected Bitmap doInBackground(String... params) {
-            return downloadBitmap(params[0]);
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            //  return the bitmap by doInBackground and store in result
-            downloadedBitmap = bitmap;
-        }
-
-        private Bitmap downloadBitmap(String src) {
-            try {
-                java.net.URL url = new java.net.URL(src);
-                HttpURLConnection connection = (HttpURLConnection) url
-                        .openConnection();
-                connection.setDoInput(true);
-                connection.connect();
-                InputStream input = connection.getInputStream();
-                Bitmap myBitmap = BitmapFactory.decodeStream(input);
-                return myBitmap;
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-    }
-
 
 }
