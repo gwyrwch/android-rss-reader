@@ -6,10 +6,12 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -30,8 +32,12 @@ import java.util.TimerTask;
 public class MainActivity extends AppCompatActivity implements DownloadCallback {
     public static final int EDIT_RSS_URL_REQUEST_CODE = 1;
     private static String RSS_URL = "https://medium.com/feed/the-story";
+//    https://lenta.ru/rss/news
+//    https://news.tut.by/rss/press.rss
     private static final String DEBUG_TAG = "NetworkStatus";
     private boolean PATH_CHANGED = false;
+    ViewDialog viewDialog;
+
 
 
     private SharedPreferences prefs = null;
@@ -43,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
     private boolean mDownloading = false;
     RecyclerView recyclerView;
     private Timer timer;
+    private ProgressBar progressBar;
 
     public enum State {
         LAUNCH,
@@ -58,9 +65,10 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
 
         onlineState = State.LAUNCH;
 
+        viewDialog = new ViewDialog(this);
+
         recyclerView = findViewById(R.id.recyclerview);
         adapter = new XMLItemListAdapter(this,new View.OnClickListener() {
-            // when the note in the MainActivity is tapped
             @Override
             public void onClick(View v) {
                 int itemPosition = recyclerView.getChildLayoutPosition(v);
@@ -84,11 +92,6 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
         Log.d(DEBUG_TAG, String.valueOf(onlineState));
 
         prefs = getSharedPreferences("com.mycompany.myAppName", MODE_PRIVATE);
-
-//        mNetworkFragment = NetworkFragment.getInstance(getSupportFragmentManager(), "https://lenta.ru/rss/news");
-//        if (isOnline())
-//            mNetworkFragment = NetworkFragment.getInstance(getSupportFragmentManager(), RSS_URL);
-//        mNetworkFragment = NetworkFragment.getInstance(getSupportFragmentManager(), "https://news.tut.by/rss/press.rss");
     }
 
     @Override
@@ -118,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
                     @Override
                     public void run() {
                     if (onlineState == State.ONLINE) {
-                        startDownload();
+                        showCustomLoadingDialog();
                     } else {
                         viewModel.getAllItemsByDate(false).observe(MainActivity.this, new Observer<List<RSSItem>>() {
                             @Override
@@ -217,6 +220,7 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
 
     @Override
     public void finishDownloading() {
+
         mDownloading = false;
         if (mNetworkFragment != null) {
             mNetworkFragment.cancelDownload();
@@ -264,6 +268,20 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
         }
     }
 
+    public void showCustomLoadingDialog() {
 
+        //..show gif
+        viewDialog.showDialog();
+        startDownload();
+
+        final Handler handler = new Handler();
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                viewDialog.hideDialog();
+            }
+        }, 3000);
+    }
 
 }
