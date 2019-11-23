@@ -64,7 +64,6 @@ public class XMLItemListAdapter extends RecyclerView.Adapter<XMLItemListAdapter.
             holder.itemImageView.setImageBitmap(ByteBitmapConverter.getBitmapFromBytes(current.getBitmap()));
 
         } else {
-            // Covers the case of data not being ready yet.
             holder.itemTitleView.setText("No news");
         }
     }

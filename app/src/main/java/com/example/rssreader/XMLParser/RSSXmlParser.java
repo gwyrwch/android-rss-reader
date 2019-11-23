@@ -159,7 +159,6 @@ public class RSSXmlParser {
     private String readImage(XmlPullParser parser) throws IOException, XmlPullParserException {
         String img = "";
         parser.require(XmlPullParser.START_TAG, namespaces, "enclosure");
-//        String tag = parser.getName();
 
         img = parser.getAttributeValue(null, "url");
         parser.nextTag();

@@ -1,13 +1,10 @@
 package com.example.rssreader.Models;
 
-import android.graphics.Bitmap;
-
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
 
 
 @Entity(tableName = "RSSItem")
@@ -23,7 +20,7 @@ public class RSSItem {
     private final String description;
     private final OffsetDateTime pubDate;
     private OffsetDateTime publicationDate;
-//    public Bitmap bitmap;
+
 
     public String getTitle() {
         return title;

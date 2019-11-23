@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -49,7 +48,6 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
     private boolean mDownloading = false;
     RecyclerView recyclerView;
     private Timer timer;
-    private ProgressBar progressBar;
 
     public enum State {
         LAUNCH,
@@ -230,7 +228,6 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
     @Override
     public void onProgressUpdate(int progressCode, int percentComplete) {
         switch(progressCode) {
-            // You can add UI behavior for progress updates here.
             case Progress.ERROR:
                 Log.d("error", "error in onProgressUpdate");
                 break;
@@ -270,8 +267,8 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
 
     public void showCustomLoadingDialog() {
 
-        //..show gif
         viewDialog.showDialog();
+        // fixme:
         startDownload();
 
         final Handler handler = new Handler();

@@ -1,7 +1,6 @@
 package com.example.rssreader.ViewModels;
 
 import android.app.Application;
-import android.os.AsyncTask;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;

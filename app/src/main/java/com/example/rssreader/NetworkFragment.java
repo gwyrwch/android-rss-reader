@@ -218,8 +218,6 @@ public class NetworkFragment extends Fragment {
         }
 
 
-
-
     }
 }
 

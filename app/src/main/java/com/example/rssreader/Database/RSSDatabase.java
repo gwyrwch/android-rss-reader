@@ -8,16 +8,10 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
-import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.example.rssreader.Models.RSSItem;
 import com.example.rssreader.Utilities.OffsetDateTimeConverter;
-import com.example.rssreader.Utilities.OffsetDateTimeToStringConverter;
-
-import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Objects;
 
 @Database(entities = {RSSItem.class}, version = 1)
 @TypeConverters({OffsetDateTimeConverter.class})
@@ -34,7 +28,6 @@ public abstract class RSSDatabase extends RoomDatabase{
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             RSSDatabase.class, "rss_database")
                             .addCallback(rssDatabaseCallback)
-//                            .allowMainThreadQueries() //fixme: may not be in production
                             .build();
                 }
             }
@@ -63,10 +56,10 @@ public abstract class RSSDatabase extends RoomDatabase{
         @Override
         protected Void doInBackground(final Void... params) {
 //            itemDao.deleteAll();
-
 //            RSSItem item = new RSSItem("title", "link", "img", "desc",
 //                    OffsetDateTimeToStringConverter.getDateFromString("Thu, 03 Mar 2016 15:30:00 +0200"));
 //            item.id = itemDao.insert(item);
+
             return null;
         }
 

@@ -27,9 +27,11 @@ public class RSSItemRepository {
         return allItemsByDate;
     }
 
-    public AsyncTask<RSSItem, Void, RSSItem> insert(RSSItem item) {
-        return new insertAsyncTask(itemDao).execute(item);
+
+    public void insert(RSSItem item) {
+        new insertAsyncTask(itemDao).execute(item);
     }
+
 
     private static class insertAsyncTask extends AsyncTask<RSSItem, Void, RSSItem> {
         private RSSItemDao asyncItemDao;
@@ -46,10 +48,10 @@ public class RSSItemRepository {
     }
 
 
-    public AsyncTask<RSSItem, Void, RSSItem> delete(RSSItem item) {
+    public void delete(RSSItem item) {
         new deleteAsyncTask(itemDao).execute(item);
-        return null;
     }
+
 
     private static class deleteAsyncTask extends AsyncTask<RSSItem, Void, Void> {
         private RSSItemDao asyncRSSItemDao;
@@ -65,9 +67,11 @@ public class RSSItemRepository {
         }
     }
 
+
     public void deleteAll() {
         new deleteAllAsyncTask(itemDao).execute();
     }
+
 
     private static class deleteAllAsyncTask extends AsyncTask<Void, Void, Void> {
         private RSSItemDao asyncRSSItemDao;
