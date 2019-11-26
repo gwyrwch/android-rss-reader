@@ -1,22 +1,22 @@
 package com.example.rssreader;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 public class SettingsActivity extends AppCompatActivity {
 
     public static final String URL = "rss_url";
     private EditText editRSSUrlView;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_settings);
 
         editRSSUrlView = findViewById(R.id.edit_rss_url);
@@ -43,4 +43,7 @@ public class SettingsActivity extends AppCompatActivity {
         editRSSUrlView.setText(currentUrl);
 
     }
+
+
+
 }

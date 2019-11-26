@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -30,7 +31,7 @@ import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity implements DownloadCallback {
     public static final int EDIT_RSS_URL_REQUEST_CODE = 1;
-    private static String RSS_URL = "https://medium.com/feed/the-story";
+    private static String RSS_URL;
 //    https://lenta.ru/rss/news
 //    https://news.tut.by/rss/press.rss
     private static final String DEBUG_TAG = "NetworkStatus";
@@ -85,6 +86,11 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
 
         viewModel = ViewModelProviders.of(this).get(ItemViewModel.class);
 
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(this /* Activity context */);
+        String defaultValue = getResources().getString(R.string.default_rss_url);
+        RSS_URL = sharedPreferences.getString("rss_url", defaultValue);
+
         mNetworkFragment = NetworkFragment.getInstance(getSupportFragmentManager(), RSS_URL);
 
         Log.d(DEBUG_TAG, String.valueOf(onlineState));
@@ -98,6 +104,11 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
 
         if (prefs.getBoolean("firstrun", true)) {
             prefs.edit().putBoolean("firstrun", false).apply();
+
+            SharedPreferences sharedPreferences =
+                    PreferenceManager.getDefaultSharedPreferences(this /* Activity context */);
+            String defaultValue = getResources().getString(R.string.default_rss_url);
+            RSS_URL = sharedPreferences.getString("rss_url", defaultValue);
 
             Intent intent = new Intent(this, SettingsActivity.class);
 
@@ -154,7 +165,13 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
         if (item.getItemId() == R.id.settings_action) {
             Intent intent = new Intent(this, SettingsActivity.class);
 
+            SharedPreferences sharedPreferences =
+                    PreferenceManager.getDefaultSharedPreferences(this /* Activity context */);
+            String defaultValue = getResources().getString(R.string.default_rss_url);
+            RSS_URL = sharedPreferences.getString("rss_url", defaultValue);
+
             intent.putExtra(SettingsActivity.URL, RSS_URL);
+
             startActivityForResult(intent, EDIT_RSS_URL_REQUEST_CODE);
 
             return true;
@@ -255,6 +272,13 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
             RSS_URL = data.getStringExtra(SettingsActivity.URL);
             mNetworkFragment.setUrlString(RSS_URL);
             PATH_CHANGED = true;
+
+
+            SharedPreferences sharedPreferences =
+                    PreferenceManager.getDefaultSharedPreferences(this /* Activity context */);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("rss_url", RSS_URL);
+            editor.apply(); //?
 
         } else {
             System.out.println(requestCode);

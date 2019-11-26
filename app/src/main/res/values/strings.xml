@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">News</string>
     <string name="rss_url">RSS url</string>
+    <string name="default_rss_url">https://medium.com/feed/the-story</string>
     <string name="save">save</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
