@@ -157,7 +157,7 @@ public class NetworkFragment extends Fragment {
                     InputStream stream = downloadUrl(urlString);
 
                     RSSXmlParser xmlParser = new RSSXmlParser();
-                    List<RSSItem> items = xmlParser.parse(stream);
+                    List<RSSItem> items = xmlParser.parse(stream, downloadCallback);
 
 
                     if (items.size() != 0) {

@@ -3,6 +3,7 @@ package com.example.rssreader.XMLParser;
 import android.util.Xml;
 
 import com.example.rssreader.BitmapDownloader;
+import com.example.rssreader.DownloadCallback;
 import com.example.rssreader.Models.RSSItem;
 import com.example.rssreader.Utilities.OffsetDateTimeToStringConverter;
 
@@ -17,21 +18,21 @@ import java.util.List;
 public class RSSXmlParser {
     private static final String namespaces = null;
 
-    public List<RSSItem> parse(InputStream in) throws XmlPullParserException, IOException {
+    public List<RSSItem> parse(InputStream in, DownloadCallback callback) throws XmlPullParserException, IOException {
         try {
             XmlPullParser parser = Xml.newPullParser();
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
             parser.setInput(in, null);
             parser.nextTag();
 
-            return readRSS(parser);
+            return readRSS(parser, callback);
 
         } finally {
             in.close();
         }
     }
 
-    private ArrayList<RSSItem> readRSS(XmlPullParser parser)
+    private ArrayList<RSSItem> readRSS(XmlPullParser parser, DownloadCallback callback)
             throws XmlPullParserException, IOException {
         ArrayList<RSSItem> items = new ArrayList<>();
         parser.require(XmlPullParser.START_TAG, null, "rss");
@@ -41,7 +42,7 @@ public class RSSXmlParser {
             }
             String name = parser.getName();
             if (name.equals("channel")) {
-                items.addAll(readChannel(parser));
+                items.addAll(readChannel(parser, callback));
             } else {
                 skip(parser);
             }
@@ -49,7 +50,7 @@ public class RSSXmlParser {
         return items;
     }
 
-    private List<RSSItem> readChannel(XmlPullParser parser) throws IOException, XmlPullParserException {
+    private List<RSSItem> readChannel(XmlPullParser parser, DownloadCallback callback) throws IOException, XmlPullParserException {
         List<RSSItem> items = new ArrayList<>();
 
         parser.require(XmlPullParser.START_TAG, namespaces, "channel");
@@ -62,7 +63,7 @@ public class RSSXmlParser {
                 }
                 String name = parser.getName();
                 if (name.equals("item")) {
-                    items.add(readItem(parser));
+                    items.add(readItem(parser, callback));
                 } else {
                     skip(parser);
                 }
@@ -73,7 +74,7 @@ public class RSSXmlParser {
         return items;
     }
 
-    private RSSItem readItem(XmlPullParser parser) throws IOException, XmlPullParserException {
+    private RSSItem readItem(XmlPullParser parser, DownloadCallback callback) throws IOException, XmlPullParserException {
         parser.require(XmlPullParser.START_TAG, namespaces, "item");
         String title = null;
         String link = null;
@@ -117,7 +118,7 @@ public class RSSXmlParser {
                 OffsetDateTimeToStringConverter.getDateFromString(pubDate),
                 null);
         BitmapDownloader id = new BitmapDownloader();
-        id.download(image, newItem);
+        id.download(image, newItem, callback);
 
         return newItem;
     }

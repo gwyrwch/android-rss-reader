@@ -243,6 +243,14 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
     }
 
     @Override
+    public void updateSingleImage(RSSItem item) {
+        if (item != null) {
+            int position = adapter.getItems().indexOf(item);
+            adapter.notifyItemChanged(position);
+        }
+    }
+
+    @Override
     public void onProgressUpdate(int progressCode, int percentComplete) {
         switch(progressCode) {
             case Progress.ERROR:

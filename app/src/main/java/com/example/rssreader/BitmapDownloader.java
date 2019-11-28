@@ -14,17 +14,19 @@ import java.net.HttpURLConnection;
 public class BitmapDownloader {
     public static Bitmap result;
 
-    public void download(String url, RSSItem item) {
+    public void download(String url, RSSItem item, DownloadCallback callback) {
         result = null;
-        BitmapDownloaderTask task = new BitmapDownloaderTask(item);
+        BitmapDownloaderTask task = new BitmapDownloaderTask(item, callback);
         task.execute(url);
     }
 
     static class BitmapDownloaderTask extends AsyncTask<String, Void, Bitmap> {
         private final RSSItem item;
+        private final DownloadCallback downloadCallback;
 
-        public BitmapDownloaderTask(RSSItem item) {
+        public BitmapDownloaderTask(RSSItem item, DownloadCallback callback) {
             this.item = item;
+            this.downloadCallback = callback;
         }
 
         public Bitmap downloadBitmap(String src) {
@@ -56,7 +58,9 @@ public class BitmapDownloader {
                 bitmap = null;
             }
 
+            System.out.println(item.getTitle() + " finished");
             item.setBitmap(ByteBitmapConverter.getBytesFromBitmap(bitmap));
+            downloadCallback.updateSingleImage(item);
         }
     }
 }

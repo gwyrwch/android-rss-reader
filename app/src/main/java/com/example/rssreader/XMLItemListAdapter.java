@@ -14,6 +14,8 @@ import com.example.rssreader.Utilities.ByteBitmapConverter;
 import com.example.rssreader.Utilities.OffsetDateTimeToStringConverter;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class XMLItemListAdapter extends RecyclerView.Adapter<XMLItemListAdapter.XMLItemViewHolder>{
     class XMLItemViewHolder extends RecyclerView.ViewHolder {
@@ -43,6 +45,13 @@ public class XMLItemListAdapter extends RecyclerView.Adapter<XMLItemListAdapter.
         inflater = LayoutInflater.from(context);
         this.itemOnClickListener = itemOnClickListener;
 
+//        final Timer timer =  new Timer();
+//        timer.scheduleAtFixedRate(new TimerTask() {
+//            @Override
+//            public void run() {
+//                notifyDataSetChanged();
+//            }
+//        }, 0, 500);
     }
 
     @Override

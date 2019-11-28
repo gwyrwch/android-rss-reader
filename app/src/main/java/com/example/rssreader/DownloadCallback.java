@@ -42,4 +42,9 @@ public interface DownloadCallback {
      */
     void finishDownloading();
 
+    /**
+     *
+     */
+    void updateSingleImage(RSSItem item);
+
 }
