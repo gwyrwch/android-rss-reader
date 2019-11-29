@@ -10,8 +10,13 @@ import com.example.rssreader.Utilities.OffsetDateTimeToStringConverter;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,6 +98,7 @@ public class RSSXmlParser {
                     break;
                 case "link":
                     link = readLink(parser);
+                    html = readHtml(link);
                     break;
                 case "description":
                     description = readDescription(parser);
@@ -107,7 +113,7 @@ public class RSSXmlParser {
                     String content = getTextFromTag(parser);
                     image = readImageFromContent(content);
                     description = readDescriptionFromContent(content);
-                    html = readHtml(content);
+//                    html = readHtml(content);
                     break;
                 default:
                     skip(parser);
@@ -126,7 +132,31 @@ public class RSSXmlParser {
     }
 
     private String readHtml(String content) {
-        return content;
+        URL url;
+        String res = "";
+
+        try {
+            // get URL content
+
+            url = new URL(content);
+            URLConnection conn = url.openConnection();
+
+            // open the stream and put it into BufferedReader
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(conn.getInputStream()));
+
+            String inputLine;
+            while ((inputLine = br.readLine()) != null) {
+                res += inputLine;
+            }
+            br.close();
+
+            System.out.println("Done");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return res;
     }
 
     private String readImageFromContent(String content) {

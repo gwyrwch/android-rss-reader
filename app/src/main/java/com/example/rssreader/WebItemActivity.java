@@ -38,7 +38,7 @@ public class WebItemActivity extends AppCompatActivity {
         Log.d("url2", encodedHtml);
         WebSettings webSetting = myWebView.getSettings();
         webSetting.setBuiltInZoomControls(true);
-        webSetting.setJavaScriptEnabled(true);
+        webSetting.setJavaScriptEnabled(false);
         myWebView.setWebViewClient(new WebViewClient());
 
         myWebView.loadData(encodedHtml, "text/html", "base64");
