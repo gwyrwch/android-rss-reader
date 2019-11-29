@@ -81,6 +81,7 @@ public class RSSXmlParser {
         String image = null;
         String description = null;
         String pubDate = null;
+        String html = null;
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
@@ -106,6 +107,7 @@ public class RSSXmlParser {
                     String content = getTextFromTag(parser);
                     image = readImageFromContent(content);
                     description = readDescriptionFromContent(content);
+                    html = readHtml(content);
                     break;
                 default:
                     skip(parser);
@@ -116,11 +118,15 @@ public class RSSXmlParser {
 
         RSSItem newItem = new RSSItem(title, link, image, description,
                 OffsetDateTimeToStringConverter.getDateFromString(pubDate),
-                null);
+                null, html);
         BitmapDownloader id = new BitmapDownloader();
         id.download(image, newItem, callback);
 
         return newItem;
+    }
+
+    private String readHtml(String content) {
+        return content;
     }
 
     private String readImageFromContent(String content) {

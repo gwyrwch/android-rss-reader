@@ -19,6 +19,12 @@ public class RSSItem {
     private final String image;
     private final String description;
     private final OffsetDateTime pubDate;
+
+    public String getHtml() {
+        return html;
+    }
+
+    private final String html;
     private OffsetDateTime publicationDate;
 
 
@@ -62,12 +68,15 @@ public class RSSItem {
     private byte[] bitmap;
 
 
-    public RSSItem(String title, String link, String image, String description, OffsetDateTime pubDate, byte[] bitmap) {
+    public RSSItem(String title, String link, String image, String description, OffsetDateTime pubDate,
+                   byte[] bitmap, String html
+    ) {
         this.title = title;
         this.link = link;
         this.image = image;
         this.description = description;
         this.pubDate = pubDate;
         this.bitmap = bitmap;
+        this.html = html;
     }
 }

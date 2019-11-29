@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
 
                 Intent intent = new Intent(MainActivity.this, WebItemActivity.class);
 
-                intent.putExtra(WebItemActivity.ITEM_LINK, itemClicked.getLink());
+                intent.putExtra(WebItemActivity.ITEM_LINK,  itemClicked.getHtml());
 
                 startActivity(intent);
             }

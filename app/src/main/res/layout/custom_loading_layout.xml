@@ -23,7 +23,6 @@
         android:id="@+id/custom_loading_imageView"
         android:layout_width="800px"
         android:layout_height="600px"
-        android:background="#000000"
         android:src="@drawable/loading"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
