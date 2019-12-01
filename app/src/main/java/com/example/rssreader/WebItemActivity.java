@@ -2,52 +2,43 @@ package com.example.rssreader;
 
 import android.os.Bundle;
 import android.util.Base64;
-import android.util.Log;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import org.apache.commons.io.FileUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-
 
 public class WebItemActivity extends AppCompatActivity {
     public static final String ITEM_LINK = "link";
+    public static final String ITEM_HTML = "html";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_webitem);
 
-        String unencodedHtml = getIntent().getStringExtra(ITEM_LINK);
-
-
         WebView myWebView = findViewById(R.id.item_webview);
 
-        Log.d("url", unencodedHtml);
+        String unencodedHtml = getIntent().getStringExtra(ITEM_HTML);
+        String url = getIntent().getStringExtra(ITEM_LINK);
 
-        String encodedHtml = Base64.encodeToString(unencodedHtml.getBytes(),
-                Base64.NO_PADDING);
+        if (url != null) {
+            myWebView.loadUrl(url);
 
-        Log.d("url2", encodedHtml);
-        WebSettings webSetting = myWebView.getSettings();
-        webSetting.setBuiltInZoomControls(true);
-        webSetting.setJavaScriptEnabled(false);
-        myWebView.setWebViewClient(new WebViewClient());
+            finish();
+        } else if (unencodedHtml != null)  {
+            String encodedHtml = Base64.encodeToString(unencodedHtml.getBytes(),
+                    Base64.NO_PADDING);
+            WebSettings webSetting = myWebView.getSettings();
+            webSetting.setBuiltInZoomControls(true);
+            webSetting.setJavaScriptEnabled(false);
+            myWebView.setWebViewClient(new WebViewClient());
 
-        myWebView.loadData(encodedHtml, "text/html", "base64");
+            myWebView.loadData(encodedHtml, "text/html", "base64");
+        }
 
-
-//        myWebView.loadUrl(url);
-
-
-//        finish();
     }
 
 }

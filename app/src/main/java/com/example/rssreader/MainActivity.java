@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
     private static String RSS_URL;
 //    https://lenta.ru/rss/news
 //    https://news.tut.by/rss/press.rss
+//    https://meduza.io/rss/all
     private static final String DEBUG_TAG = "NetworkStatus";
     private boolean PATH_CHANGED = false;
     ViewDialog viewDialog;
@@ -75,7 +76,11 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
 
                 Intent intent = new Intent(MainActivity.this, WebItemActivity.class);
 
-                intent.putExtra(WebItemActivity.ITEM_LINK,  itemClicked.getHtml());
+                if (onlineState == State.ONLINE) {
+                    intent.putExtra(WebItemActivity.ITEM_LINK,  itemClicked.getLink());
+                } else {
+                    intent.putExtra(WebItemActivity.ITEM_HTML, itemClicked.getHtml());
+                }
 
                 startActivity(intent);
             }
@@ -217,6 +222,8 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
         if (result != null) {
             viewModel.deleteAllItems();
             viewModel.setAllItemsByDate(result);
+            System.out.println("size: " + result.size());
+
             viewModel.getAllItemsByDate(true).observe(this, new Observer<List<RSSItem>>() {
                 @Override
                 public void onChanged(@Nullable final List<RSSItem> rssItems) {
@@ -248,6 +255,15 @@ public class MainActivity extends AppCompatActivity implements DownloadCallback 
             int position = adapter.getItems().indexOf(item);
             adapter.notifyItemChanged(position);
         }
+    }
+
+    @Override
+    public void updateSingleHtml(RSSItem item) {
+        System.out.println(item.getTitle() + " loaded");
+//        if (item != null) {
+//            int position = adapter.getItems().indexOf(item);
+//            adapter.notifyItemChanged(position);
+//        }
     }
 
     @Override

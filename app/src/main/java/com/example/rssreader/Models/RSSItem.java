@@ -20,11 +20,15 @@ public class RSSItem {
     private final String description;
     private final OffsetDateTime pubDate;
 
-    public String getHtml() {
+    public final String getHtml() {
         return html;
     }
 
-    private final String html;
+    public void setHtml(String html) {
+        this.html = html;
+    }
+
+    private String html;
     private OffsetDateTime publicationDate;
 
 

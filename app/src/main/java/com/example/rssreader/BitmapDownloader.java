@@ -58,7 +58,6 @@ public class BitmapDownloader {
                 bitmap = null;
             }
 
-            System.out.println(item.getTitle() + " finished");
             item.setBitmap(ByteBitmapConverter.getBytesFromBitmap(bitmap));
             downloadCallback.updateSingleImage(item);
         }

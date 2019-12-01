@@ -4,6 +4,7 @@ import android.util.Xml;
 
 import com.example.rssreader.BitmapDownloader;
 import com.example.rssreader.DownloadCallback;
+import com.example.rssreader.HtmlDownloader;
 import com.example.rssreader.Models.RSSItem;
 import com.example.rssreader.Utilities.OffsetDateTimeToStringConverter;
 
@@ -22,6 +23,7 @@ import java.util.List;
 
 public class RSSXmlParser {
     private static final String namespaces = null;
+    private int itemCount = 0;
 
     public List<RSSItem> parse(InputStream in, DownloadCallback callback) throws XmlPullParserException, IOException {
         try {
@@ -98,7 +100,7 @@ public class RSSXmlParser {
                     break;
                 case "link":
                     link = readLink(parser);
-                    html = readHtml(link);
+//                    html = readHtml(link);
                     break;
                 case "description":
                     description = readDescription(parser);
@@ -128,6 +130,11 @@ public class RSSXmlParser {
         BitmapDownloader id = new BitmapDownloader();
         id.download(image, newItem, callback);
 
+        if (itemCount < 10) {
+            HtmlDownloader htmlDownloader = new HtmlDownloader();
+            htmlDownloader.download(link, newItem, callback);
+        }
+        itemCount++;
         return newItem;
     }
 
