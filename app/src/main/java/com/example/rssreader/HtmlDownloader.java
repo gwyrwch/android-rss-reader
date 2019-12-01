@@ -33,8 +33,6 @@ public class HtmlDownloader {
             String res = "";
 
             try {
-                // get URL content
-
                 url = new URL(content);
                 URLConnection conn = url.openConnection();
 
@@ -72,10 +70,9 @@ public class HtmlDownloader {
                 html = null;
             }
 
-            // fixme:
+            // fixme: ids
             System.out.println(item.getTitle() + " finished id = "  + item.id);
             item.setHtml(html);
-//            item.setBitmap(ByteBitmapConverter.getBytesFromBitmap(bitmap));
             downloadCallback.updateSingleHtml(item);
         }
     }

@@ -2,6 +2,7 @@ package com.example.rssreader;
 
 import android.os.Bundle;
 import android.util.Base64;
+import android.view.KeyEvent;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -12,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity;
 public class WebItemActivity extends AppCompatActivity {
     public static final String ITEM_LINK = "link";
     public static final String ITEM_HTML = "html";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +27,6 @@ public class WebItemActivity extends AppCompatActivity {
         if (url != null) {
             myWebView.loadUrl(url);
 
-            finish();
         } else if (unencodedHtml != null)  {
             String encodedHtml = Base64.encodeToString(unencodedHtml.getBytes(),
                     Base64.NO_PADDING);
@@ -37,10 +36,17 @@ public class WebItemActivity extends AppCompatActivity {
             myWebView.setWebViewClient(new WebViewClient());
 
             myWebView.loadData(encodedHtml, "text/html", "base64");
+        } else {
+            finish();
         }
-
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
+        finish();
+    }
 }
 
 

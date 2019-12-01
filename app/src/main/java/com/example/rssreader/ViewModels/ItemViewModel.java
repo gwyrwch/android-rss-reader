@@ -27,8 +27,10 @@ public class ItemViewModel extends AndroidViewModel {
     }
 
     public LiveData<List<RSSItem>> getAllItemsByDate(boolean isOnline) {
-        if (!isOnline)
+        if (!isOnline) {
+//            System.out.println("html vm: " + localAllItemsByDate.getValue().get(0).getHtml() + "\n " + localAllItemsByDate.getValue().get(9).getHtml());
             return localAllItemsByDate;
+        }
         else
             return allItemsByDate;
     }
